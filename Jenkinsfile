@@ -12,15 +12,66 @@ node {
             sh './jenkins/scripts/test.sh'
         }
 
+        stage('Manual Approval') {
+            steps {
+                script {
+                    // Prompt for manual approval
+                    def userInput = input(
+                        id: 'userInput', message: 'Lanjutkan ke tahap Deploy?', parameters: [
+                            [$class: 'ChoiceParameter', 
+                             name: 'ACTION', 
+                             choices: ['Proceed', 'Abort'], 
+                             description: 'Pilih Lanjutkan untuk melanjutkan penerapan atau Batalkan untuk menghentikan alur.'
+                            ]
+                        ]
+                    )
+                    // Check user input
+                    if (userInput == 'Abort') {
+                        error 'Pipeline aborted by user.'
+                    }
+                }
+            }
+        }
+
         stage('Deploy') {
-            // Execute the test script inside the Docker container
+            // Execute the deliver script inside the Docker container
             sh './jenkins/scripts/deliver.sh'
+            // Add sleep for 60 seconds
             sleep 60
-            input message: 'Sudah selesai menggunakan React App? (Klik "Proceed" untuk mengakhiri)' 
-            sh './jenkins/scripts/kill.sh' 
+            sh './jenkins/scripts/kill.sh'
         }
     }
 }
+
+// Scripted Pipeline
+// node {
+//     // Using Docker with specific image and arguments
+//     docker.image('node:16-buster-slim').inside('-p 3000:3000') {
+//         stage('Build') {
+//             // Execute npm install inside the Docker container
+//             sh 'npm install'
+//         }
+
+//         stage('Test') {
+//             // Execute the test script inside the Docker container
+//             sh './jenkins/scripts/test.sh'
+//         }
+
+//         stage('Manual Approval') {
+//             // Execute the test script inside the Docker container
+//             input message: 'Sudah selesai menggunakan React App? (Klik "Proceed" untuk mengakhiri)' 
+//             sh './jenkins/scripts/kill.sh'
+//         }
+
+//         stage('Deploy') {
+//             // Execute the test script inside the Docker container
+//             sh './jenkins/scripts/deliver.sh'
+//             sleep 60
+//             input message: 'Sudah selesai menggunakan React App? (Klik "Proceed" untuk mengakhiri)' 
+//             sh './jenkins/scripts/kill.sh' 
+//         }
+//     }
+// }
 
 // Declarative Pipeline
 // pipeline {
