@@ -14,7 +14,8 @@ node {
 
         stage('Deploy') {
             // Execute the test script inside the Docker container
-            sh './jenkins/scripts/deliver.sh' 
+            sh './jenkins/scripts/deliver.sh'
+            sleep 60
             input message: 'Sudah selesai menggunakan React App? (Klik "Proceed" untuk mengakhiri)' 
             sh './jenkins/scripts/kill.sh' 
         }
