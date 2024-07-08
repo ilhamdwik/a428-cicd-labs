@@ -13,24 +13,7 @@ node {
         }
 
         stage('Manual Approval') {
-            steps {
-                script {
-                    // Prompt for manual approval
-                    def userInput = input(
-                        id: 'userInput', message: 'Lanjutkan ke tahap Deploy?', parameters: [
-                            [$class: 'ChoiceParameter', 
-                             name: 'ACTION', 
-                             choices: ['Proceed', 'Abort'], 
-                             description: 'Pilih Lanjutkan untuk melanjutkan penerapan atau Batalkan untuk menghentikan alur.'
-                            ]
-                        ]
-                    )
-                    // Check user input
-                    if (userInput == 'Abort') {
-                        error 'Pipeline aborted by user.'
-                    }
-                }
-            }
+            input "Lanjutkan ke tahap Deploy?"
         }
 
         stage('Deploy') {
